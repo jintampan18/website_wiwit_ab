@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.custom-box-shadow {
+    box-shadow: 0px 10px 22px 0px rgba(235, 235, 235, 0.10), 0px 41px 41px 0px rgba(235, 235, 235, 0.09), 0px 92px 55px 0px rgba(235, 235, 235, 0.05), 0px 163px 65px 0px rgba(235, 235, 235, 0.01), 0px 255px 71px 0px rgba(235, 235, 235, 0.00);
+}
+
+.ces {
+    box-shadow: 0px 3px 8px 0px rgba(135, 130, 130, 0.10), 0px 14px 14px 0px rgba(135, 130, 130, 0.09), 0px 31px 19px 0px rgba(135, 130, 130, 0.05), 0px 55px 22px 0px rgba(135, 130, 130, 0.01), 0px 86px 24px 0px rgba(135, 130, 130, 0.00);
+}
+
+.pattern-header {
+    background-color: hsla(195, 33%, 91%, 1);
+    background-image:
+        radial-gradient(at 69% 33%, hsla(249, 61%, 74%, 1) 0px, transparent 50%),
+        radial-gradient(at 20% 76%, hsla(180, 66%, 75%, 1) 0px, transparent 50%);
+}
