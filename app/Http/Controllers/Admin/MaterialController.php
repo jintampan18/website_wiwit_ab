@@ -32,12 +32,12 @@ class MaterialController extends Controller
         $currentPage = Paginator::resolveCurrentPage() ?? 1;
         $perPage = 10;
         $materialsPaginated = new LengthAwarePaginator(
-        $materials->forPage($currentPage, $perPage),
-        $materials->count(),
-        $perPage,
-        $currentPage,
-        ['path' => Paginator::resolveCurrentPath()]
-    );
+            $materials->forPage($currentPage, $perPage),
+            $materials->count(),
+            $perPage,
+            $currentPage,
+            ['path' => Paginator::resolveCurrentPath()]
+        );
         return view('admin.material.index')->with('materialsPaginated', $materialsPaginated)->with('materialCategories', $materialCategories);
         return view('admin.material.index', compact('materials', 'materialCategories'));
     }
@@ -50,10 +50,10 @@ class MaterialController extends Controller
 
     public function edit($id)
     {
-    $material = Material::findOrFail($id);
-    $materialCategories = $this->materialCategory->getAll();
+        $material = Material::findOrFail($id);
+        $materialCategories = $this->materialCategory->getAll();
 
-    return view('admin.material.edit', compact('material', 'materialCategories'));
+        return view('admin.material.edit', compact('material', 'materialCategories'));
     }
 
 
@@ -85,6 +85,7 @@ class MaterialController extends Controller
 
         try {
             $this->material->store($validatedData);
+
             return redirect()->back()->with('success', 'Material created successfully');
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', $th->getMessage());
@@ -98,47 +99,33 @@ class MaterialController extends Controller
     }
 
     public function update(Request $request, $id)
-{
-    $validatedData = $request->validate([
-        'material_category_id' => 'required',
-        'title' => 'required',
-        'author' => 'required',
-        'year' => 'required',
-        'jurnal' => 'nullable',
-        'volume' => 'nullable',
-        'nomor' => 'nullable',
-        'halaman' => 'nullable',
-        'penerbit' => 'nullable',
-        'link' => 'nullable',
-        'description' => 'required',
-        'thumbnail'        => ['nullable', 'mimes:jpg,jpeg,png'],
-        'file'        => ['nullable', 'mimes:pdf'],
-    ]);
+    {
+        $validatedData = $request->validate([
+            'material_category_id' => 'required',
+            'title' => 'required',
+            'author' => 'required',
+            'year' => 'required',
+            'jurnal' => 'nullable',
+            'volume' => 'nullable',
+            'nomor' => 'nullable',
+            'halaman' => 'nullable',
+            'penerbit' => 'nullable',
+            'link' => 'nullable',
+            'description' => 'required',
+            'thumbnail'        => ['nullable', 'mimes:jpg,jpeg,png'],
+            'file'        => ['nullable', 'mimes:pdf'],
+        ]);
 
-    if ($request->hasFile('file')) {
-        $file = $request->file('file');
-        $fileName = now()->format('Ymd_His') . '_' . $file->getClientOriginalName();
-        $filePath = $file->storeAs('public/materials', $fileName);
-        $validatedData['file'] = $fileName;
+        try {
+            // dd($validatedData);
+
+            // Update material with the validated data
+            $this->material->update($id, $validatedData);
+            return redirect()->route('admin.material.index')->with('success', 'Material update successfully');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', $th->getMessage());
+        }
     }
-
-    if ($request->hasFile('thumbnail')) {
-        $thumbnail = $request->file('thumbnail');
-        $thumbnailName = now()->format('Ymd_His') . '_' . $thumbnail->getClientOriginalName();
-        $thumbnailPath = $thumbnail->storeAs('public/materials', $thumbnailName);
-        $validatedData['thumbnail'] = $thumbnailName;
-    }
-
-    try {
-        // Update material with the validated data
-        $this->material->update($id, $validatedData);
-        return redirect()->route('admin.material.index')->with('success', 'Material update successfully');
-    } catch (\Throwable $th) {
-        return redirect()->back()->with('error', $th->getMessage());
-    }
-}
-
-
 
     public function destroy($id)
     {
@@ -157,9 +144,9 @@ class MaterialController extends Controller
     }
 
     public function search(Request $request)
-{
-    $search = $request->input('search');
-    $materials = Material::where('title', 'like', '%' . $search . '%')->get();
-    return view('partials.material_table', compact('materials'))->render();
-}
+    {
+        $search = $request->input('search');
+        $materials = Material::where('title', 'like', '%' . $search . '%')->get();
+        return view('partials.material_table', compact('materials'))->render();
+    }
 }

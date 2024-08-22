@@ -42,7 +42,7 @@ class MaterialController extends Controller
 
     public function addPage()
     {
-        return view('admin.material.addMaterial',[
+        return view('admin.material.addMaterial', [
             'materials'          => $this->material->getAll(),
             'materialCategories' => $this->materialCategory->getAll()
         ]);
@@ -50,6 +50,8 @@ class MaterialController extends Controller
 
     public function addData(Request $request)
     {
+        // dd($request->all());
+
         $request->validate([
             'material_category_id' => 'required',
             'title'                => 'required|string|max:255',
@@ -66,16 +68,17 @@ class MaterialController extends Controller
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $filename = now()->format('Ymd_His') . '_' . $file->getClientOriginalName();
+            // dd($filename);
+
             $path = $file->storeAs('public/materials', $filename);
         }
 
         $thumbnailFilename = null;
         if ($request->hasFile('thumbnail')) {
-        $thumbnail = $request->file('thumbnail');
-        $thumbnailFilename = now()->format('Ymd_His') . '_' . $thumbnail->getClientOriginalName();
-        $thumbnail->storeAs('public/materials', $thumbnailFilename);
-    }
-
+            $thumbnail = $request->file('thumbnail');
+            $thumbnailFilename = now()->format('Ymd_His') . '_' . $thumbnail->getClientOriginalName();
+            $thumbnail->storeAs('public/materials', $thumbnailFilename);
+        }
 
         Material::create([
             'material_category_id' => $request->input('material_category_id'),
@@ -136,37 +139,36 @@ class MaterialController extends Controller
         $category = $request->input('category');
         $download = $request->input('download');
 
-    $materials = Material::query();
+        $materials = Material::query();
 
-    if ($year) {
-        $materials->where('year', $year);
+        if ($year) {
+            $materials->where('year', $year);
+        }
+
+        if ($category) {
+            $materials->where('material_category_id', $category);
+        }
+
+        $filteredMaterials = $materials->get();
+
+        return view('user.material.item', [
+            'materials' => $filteredMaterials
+        ])->render();
     }
 
-    if ($category) {
-        $materials->where('material_category_id', $category);
-    }
-
-    $filteredMaterials = $materials->get();
-
-    return view('user.material.item', [
-        'materials' => $filteredMaterials
-    ])->render();
-}
-
-public function search(Request $request)
+    public function search(Request $request)
     {
         $title = $request->input('title');
         $materials = Material::query();
 
-    if ($title) {
-        $materials->where('title', 'like', '%' . $title . '%');
+        if ($title) {
+            $materials->where('title', 'like', '%' . $title . '%');
+        }
+
+        $filteredMaterials = $materials->get();
+
+        return view('user.material.item', [
+            'materials' => $filteredMaterials
+        ])->render();
     }
-
-    $filteredMaterials = $materials->get();
-
-    return view('user.material.item', [
-        'materials' => $filteredMaterials
-    ])->render();
-}
-
 }

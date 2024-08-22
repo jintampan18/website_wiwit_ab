@@ -58,13 +58,13 @@ class MaterialRepository implements MaterialInterface
 
         if (isset($data['thumbnail'])) {
             Storage::delete('public/materials/' . $material->thumbnail);
-            $filenameThumbnail = uniqid() . '.' . $data['thumbnail']->extension();
+            $filenameThumbnail = now()->format('Ymd_His') . '_' . $data['thumbnail']->getClientOriginalName();
             $data['thumbnail']->storeAs('public/materials', $filenameThumbnail);
         }
 
         if (isset($data['file'])) {
             Storage::delete('public/materials/' . $material->file);
-            $filenameFile = uniqid() . '.' . $data['file']->extension();
+            $filenameFile = now()->format('Ymd_His') . '.' . $data['file']->getClientOriginalName();
             $data['file']->storeAs('public/materials', $filenameFile);
         }
 
@@ -78,7 +78,7 @@ class MaterialRepository implements MaterialInterface
 
             DB::commit();
         } catch (\Exception $e) {
-            Storage::delete('public/materials/' . $filenameThumbnail);
+            // Storage::delete('public/materials/' . $filenameThumbnail);
             Storage::delete('public/materials/' . $filenameFile);
             DB::rollBack();
             return $e->getMessage();

@@ -153,9 +153,6 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
         // Route::put('dashboard/material/{id}/update', [MaterialController::class, 'update'])->name('dashboard.material.update');
         Route::put('dashboard/material/{id}/update', [MaterialController::class, 'update'])->name('admin.material.update');
         Route::get('/search/material', [MaterialController::class, 'search'])->name('search.material');
-
-
-
     });
 
     //Material Category
